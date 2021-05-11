@@ -2,6 +2,7 @@ package blinker
 
 import (
 	"context"
+	"log"
 	"time"
 )
 
@@ -24,6 +25,7 @@ func (s *Service) StartNotifyingToBlink(ctx context.Context) <-chan struct{} {
 			select {
 			case <-ticker.C:
 				if time.Since(s.userLastBlinked).Seconds() > float64(s.blinkedTime) {
+					log.Print("Sending notification to blink")
 					ch <- struct{}{}
 				}
 			case <-ctx.Done():
@@ -37,5 +39,6 @@ func (s *Service) StartNotifyingToBlink(ctx context.Context) <-chan struct{} {
 }
 
 func (s *Service) Blinked() {
+	log.Print("Blinking...")
 	s.userLastBlinked = time.Now()
 }
