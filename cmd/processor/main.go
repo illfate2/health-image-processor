@@ -4,6 +4,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"os"
 
 	"github.com/illfate2/health-image-processor/internal/blinker"
 	"github.com/illfate2/health-image-processor/internal/image"
@@ -13,15 +14,18 @@ import (
 	grpclib "google.golang.org/grpc"
 )
 
+const grpcServerPortEnv = "GRPC_SERVER_PORT"
+const httpServerPortEnv = "HTTP_SERVER_PORT"
+
 func main() {
 	service := blinker.NewService(4)
 	processor := image.NewProcessor()
 	wsServer := ws.NewServer(service, processor)
 	go func() {
-		log.Fatal(http.ListenAndServe(":9999", wsServer))
+		log.Fatal(http.ListenAndServe(":"+os.Getenv(httpServerPortEnv), wsServer))
 	}()
 	grpcServer := grpclib.NewServer()
-	lis, err := net.Listen("tcp", ":8888")
+	lis, err := net.Listen("tcp", ":"+os.Getenv(grpcServerPortEnv))
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
