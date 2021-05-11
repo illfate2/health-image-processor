@@ -1,0 +1,11 @@
+syntax = "proto3";
+import "google/protobuf/empty.proto";
+option go_package = "/proto";
+
+service Health {
+    rpc UserBlinked (stream Blinked) returns (google.protobuf.Empty);
+}
+
+message Blinked {
+    uint32 amount = 1;
+}
