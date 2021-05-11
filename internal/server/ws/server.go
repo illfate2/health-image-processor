@@ -21,8 +21,8 @@ type Server struct {
 }
 
 type notifyMessage struct {
-	Type    string
-	Message string
+	Type    string `json:"type"`
+	Message string `json:"message"`
 }
 
 func newNotifyMessage(t string, message string) notifyMessage {
