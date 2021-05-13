@@ -83,3 +83,17 @@ func (s *Processor) Blinked() {
 	log.Print("Blinking...")
 	s.userLastBlinked = time.Now()
 }
+
+func (s *Processor) NoseCrooked(isCrooked bool) {
+	log.Print("Nose crooked...")
+	if isCrooked {
+		s.noseCrookedCh <- struct{}{}
+	}
+}
+
+func (s *Processor) BackCrooked(isCrooked bool) {
+	log.Print("Back crooked...")
+	if isCrooked {
+		s.backCrookedCh <- struct{}{}
+	}
+}

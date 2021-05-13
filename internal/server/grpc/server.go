@@ -37,7 +37,7 @@ func (s *Server) UserBlinked(req proto.Health_UserBlinkedServer) error {
 
 func (s *Server) ShouldersPositionChange(req proto.Health_ShouldersPositionChangeServer) error {
 	for {
-		_, err := req.Recv()
+		msg, err := req.Recv()
 		if err == io.EOF {
 			return nil
 		}
@@ -49,14 +49,14 @@ func (s *Server) ShouldersPositionChange(req proto.Health_ShouldersPositionChang
 		case <-req.Context().Done():
 			return nil
 		default:
-			// TODO
+			s.service.BackCrooked(msg.IsCrooked)
 		}
 	}
 }
 
 func (s *Server) NosePositionChange(req proto.Health_NosePositionChangeServer) error {
 	for {
-		_, err := req.Recv()
+		msg, err := req.Recv()
 		if err == io.EOF {
 			return nil
 		}
@@ -68,7 +68,7 @@ func (s *Server) NosePositionChange(req proto.Health_NosePositionChangeServer) e
 		case <-req.Context().Done():
 			return nil
 		default:
-			// TODO
+			s.service.NoseCrooked(msg.IsCrooked)
 		}
 	}
 }
