@@ -10,12 +10,15 @@ service Health {
 
 message ShouldersPositionChangeMsg {
     bool isCrooked = 1;
+    bool isFaceRecognized = 2;
 }
 
 message NosePositionChangeMsg {
     bool isCrooked = 1;
+    bool isFaceRecognized = 2;
 }
 
 message Blinked {
     uint32 amount = 1;
+    bool isFaceRecognized = 2;
 }
