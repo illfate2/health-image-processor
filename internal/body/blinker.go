@@ -79,19 +79,31 @@ func (s *Processor) StartNotifying(ctx context.Context) <-chan NotifyMessage {
 	return ch
 }
 
-func (s *Processor) Blinked() {
+func (s *Processor) Blinked(isFaceRecognized bool) {
+	if !isFaceRecognized {
+		log.Print("face is not recognized for blinking")
+		return
+	}
 	log.Print("Blinking...")
 	s.userLastBlinked = time.Now()
 }
 
-func (s *Processor) NoseCrooked(isCrooked bool) {
+func (s *Processor) NoseCrooked(isCrooked, isFaceRecognized bool) {
+	if !isFaceRecognized {
+		log.Print("face is not recognized for nose")
+		return
+	}
 	log.Print("Nose crooked...")
 	if isCrooked {
 		s.noseCrookedCh <- struct{}{}
 	}
 }
 
-func (s *Processor) BackCrooked(isCrooked bool) {
+func (s *Processor) BackCrooked(isCrooked, isFaceRecognized bool) {
+	if !isFaceRecognized {
+		log.Print("face is not recognized for back")
+		return
+	}
 	log.Print("Back crooked...")
 	if isCrooked {
 		s.backCrookedCh <- struct{}{}
