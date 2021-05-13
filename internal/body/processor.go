@@ -93,7 +93,7 @@ func (s *Processor) NoseCrooked(isCrooked, isFaceRecognized bool) {
 		log.Print("face is not recognized for nose")
 		return
 	}
-	log.Print("Nose crooked...")
+	log.Print("Nose crooked...", isCrooked)
 	if isCrooked {
 		s.noseCrookedCh <- struct{}{}
 	}
@@ -104,7 +104,7 @@ func (s *Processor) BackCrooked(isCrooked, isFaceRecognized bool) {
 		log.Print("face is not recognized for back")
 		return
 	}
-	log.Print("Back crooked...")
+	log.Print("Back crooked...", isCrooked)
 	if isCrooked {
 		s.backCrookedCh <- struct{}{}
 	}
