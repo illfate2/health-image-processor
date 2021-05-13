@@ -24,8 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type HealthClient interface {
 	UserBlinked(ctx context.Context, opts ...grpc.CallOption) (Health_UserBlinkedClient, error)
-	ShoulderChangeAngle(ctx context.Context, opts ...grpc.CallOption) (Health_ShoulderChangeAngleClient, error)
-	NoseChangeAngle(ctx context.Context, opts ...grpc.CallOption) (Health_NoseChangeAngleClient, error)
+	ShouldersPositionChange(ctx context.Context, opts ...grpc.CallOption) (Health_ShouldersPositionChangeClient, error)
+	NosePositionChange(ctx context.Context, opts ...grpc.CallOption) (Health_NosePositionChangeClient, error)
 }
 
 type healthClient struct {
@@ -70,30 +70,30 @@ func (x *healthUserBlinkedClient) CloseAndRecv() (*empty.Empty, error) {
 	return m, nil
 }
 
-func (c *healthClient) ShoulderChangeAngle(ctx context.Context, opts ...grpc.CallOption) (Health_ShoulderChangeAngleClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Health_ServiceDesc.Streams[1], "/Health/ShoulderChangeAngle", opts...)
+func (c *healthClient) ShouldersPositionChange(ctx context.Context, opts ...grpc.CallOption) (Health_ShouldersPositionChangeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Health_ServiceDesc.Streams[1], "/Health/ShouldersPositionChange", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &healthShoulderChangeAngleClient{stream}
+	x := &healthShouldersPositionChangeClient{stream}
 	return x, nil
 }
 
-type Health_ShoulderChangeAngleClient interface {
-	Send(*ShouldersAngles) error
+type Health_ShouldersPositionChangeClient interface {
+	Send(*ShouldersPositionChangeMsg) error
 	CloseAndRecv() (*empty.Empty, error)
 	grpc.ClientStream
 }
 
-type healthShoulderChangeAngleClient struct {
+type healthShouldersPositionChangeClient struct {
 	grpc.ClientStream
 }
 
-func (x *healthShoulderChangeAngleClient) Send(m *ShouldersAngles) error {
+func (x *healthShouldersPositionChangeClient) Send(m *ShouldersPositionChangeMsg) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *healthShoulderChangeAngleClient) CloseAndRecv() (*empty.Empty, error) {
+func (x *healthShouldersPositionChangeClient) CloseAndRecv() (*empty.Empty, error) {
 	if err := x.ClientStream.CloseSend(); err != nil {
 		return nil, err
 	}
@@ -104,30 +104,30 @@ func (x *healthShoulderChangeAngleClient) CloseAndRecv() (*empty.Empty, error) {
 	return m, nil
 }
 
-func (c *healthClient) NoseChangeAngle(ctx context.Context, opts ...grpc.CallOption) (Health_NoseChangeAngleClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Health_ServiceDesc.Streams[2], "/Health/NoseChangeAngle", opts...)
+func (c *healthClient) NosePositionChange(ctx context.Context, opts ...grpc.CallOption) (Health_NosePositionChangeClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Health_ServiceDesc.Streams[2], "/Health/NosePositionChange", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &healthNoseChangeAngleClient{stream}
+	x := &healthNosePositionChangeClient{stream}
 	return x, nil
 }
 
-type Health_NoseChangeAngleClient interface {
-	Send(*NoseAngle) error
+type Health_NosePositionChangeClient interface {
+	Send(*NosePositionChangeMsg) error
 	CloseAndRecv() (*empty.Empty, error)
 	grpc.ClientStream
 }
 
-type healthNoseChangeAngleClient struct {
+type healthNosePositionChangeClient struct {
 	grpc.ClientStream
 }
 
-func (x *healthNoseChangeAngleClient) Send(m *NoseAngle) error {
+func (x *healthNosePositionChangeClient) Send(m *NosePositionChangeMsg) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *healthNoseChangeAngleClient) CloseAndRecv() (*empty.Empty, error) {
+func (x *healthNosePositionChangeClient) CloseAndRecv() (*empty.Empty, error) {
 	if err := x.ClientStream.CloseSend(); err != nil {
 		return nil, err
 	}
@@ -143,8 +143,8 @@ func (x *healthNoseChangeAngleClient) CloseAndRecv() (*empty.Empty, error) {
 // for forward compatibility
 type HealthServer interface {
 	UserBlinked(Health_UserBlinkedServer) error
-	ShoulderChangeAngle(Health_ShoulderChangeAngleServer) error
-	NoseChangeAngle(Health_NoseChangeAngleServer) error
+	ShouldersPositionChange(Health_ShouldersPositionChangeServer) error
+	NosePositionChange(Health_NosePositionChangeServer) error
 	mustEmbedUnimplementedHealthServer()
 }
 
@@ -155,11 +155,11 @@ type UnimplementedHealthServer struct {
 func (UnimplementedHealthServer) UserBlinked(Health_UserBlinkedServer) error {
 	return status.Errorf(codes.Unimplemented, "method UserBlinked not implemented")
 }
-func (UnimplementedHealthServer) ShoulderChangeAngle(Health_ShoulderChangeAngleServer) error {
-	return status.Errorf(codes.Unimplemented, "method ShoulderChangeAngle not implemented")
+func (UnimplementedHealthServer) ShouldersPositionChange(Health_ShouldersPositionChangeServer) error {
+	return status.Errorf(codes.Unimplemented, "method ShouldersPositionChange not implemented")
 }
-func (UnimplementedHealthServer) NoseChangeAngle(Health_NoseChangeAngleServer) error {
-	return status.Errorf(codes.Unimplemented, "method NoseChangeAngle not implemented")
+func (UnimplementedHealthServer) NosePositionChange(Health_NosePositionChangeServer) error {
+	return status.Errorf(codes.Unimplemented, "method NosePositionChange not implemented")
 }
 func (UnimplementedHealthServer) mustEmbedUnimplementedHealthServer() {}
 
@@ -200,52 +200,52 @@ func (x *healthUserBlinkedServer) Recv() (*Blinked, error) {
 	return m, nil
 }
 
-func _Health_ShoulderChangeAngle_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(HealthServer).ShoulderChangeAngle(&healthShoulderChangeAngleServer{stream})
+func _Health_ShouldersPositionChange_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(HealthServer).ShouldersPositionChange(&healthShouldersPositionChangeServer{stream})
 }
 
-type Health_ShoulderChangeAngleServer interface {
+type Health_ShouldersPositionChangeServer interface {
 	SendAndClose(*empty.Empty) error
-	Recv() (*ShouldersAngles, error)
+	Recv() (*ShouldersPositionChangeMsg, error)
 	grpc.ServerStream
 }
 
-type healthShoulderChangeAngleServer struct {
+type healthShouldersPositionChangeServer struct {
 	grpc.ServerStream
 }
 
-func (x *healthShoulderChangeAngleServer) SendAndClose(m *empty.Empty) error {
+func (x *healthShouldersPositionChangeServer) SendAndClose(m *empty.Empty) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *healthShoulderChangeAngleServer) Recv() (*ShouldersAngles, error) {
-	m := new(ShouldersAngles)
+func (x *healthShouldersPositionChangeServer) Recv() (*ShouldersPositionChangeMsg, error) {
+	m := new(ShouldersPositionChangeMsg)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-func _Health_NoseChangeAngle_Handler(srv interface{}, stream grpc.ServerStream) error {
-	return srv.(HealthServer).NoseChangeAngle(&healthNoseChangeAngleServer{stream})
+func _Health_NosePositionChange_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(HealthServer).NosePositionChange(&healthNosePositionChangeServer{stream})
 }
 
-type Health_NoseChangeAngleServer interface {
+type Health_NosePositionChangeServer interface {
 	SendAndClose(*empty.Empty) error
-	Recv() (*NoseAngle, error)
+	Recv() (*NosePositionChangeMsg, error)
 	grpc.ServerStream
 }
 
-type healthNoseChangeAngleServer struct {
+type healthNosePositionChangeServer struct {
 	grpc.ServerStream
 }
 
-func (x *healthNoseChangeAngleServer) SendAndClose(m *empty.Empty) error {
+func (x *healthNosePositionChangeServer) SendAndClose(m *empty.Empty) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *healthNoseChangeAngleServer) Recv() (*NoseAngle, error) {
-	m := new(NoseAngle)
+func (x *healthNosePositionChangeServer) Recv() (*NosePositionChangeMsg, error) {
+	m := new(NosePositionChangeMsg)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -266,13 +266,13 @@ var Health_ServiceDesc = grpc.ServiceDesc{
 			ClientStreams: true,
 		},
 		{
-			StreamName:    "ShoulderChangeAngle",
-			Handler:       _Health_ShoulderChangeAngle_Handler,
+			StreamName:    "ShouldersPositionChange",
+			Handler:       _Health_ShouldersPositionChange_Handler,
 			ClientStreams: true,
 		},
 		{
-			StreamName:    "NoseChangeAngle",
-			Handler:       _Health_NoseChangeAngle_Handler,
+			StreamName:    "NosePositionChange",
+			Handler:       _Health_NosePositionChange_Handler,
 			ClientStreams: true,
 		},
 	},

@@ -20,32 +20,25 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   syntax='proto3',
   serialized_options=b'Z\006/proto',
   create_key=_descriptor._internal_create_key,
-  serialized_pb=b'\n\x0chealth.proto\x1a\x1bgoogle/protobuf/empty.proto\"H\n\x0fShouldersAngles\x12\x19\n\x11leftShoulderAngle\x18\x01 \x01(\x01\x12\x1a\n\x12rightShoulderAngle\x18\x02 \x01(\x01\"\x1e\n\tNoseAngle\x12\x11\n\tnoseAngle\x18\x01 \x01(\x01\"\x19\n\x07\x42linked\x12\x0e\n\x06\x61mount\x18\x01 \x01(\r2\xb7\x01\n\x06Health\x12\x31\n\x0bUserBlinked\x12\x08.Blinked\x1a\x16.google.protobuf.Empty(\x01\x12\x41\n\x13ShoulderChangeAngle\x12\x10.ShouldersAngles\x1a\x16.google.protobuf.Empty(\x01\x12\x37\n\x0fNoseChangeAngle\x12\n.NoseAngle\x1a\x16.google.protobuf.Empty(\x01\x42\x08Z\x06/protob\x06proto3'
+  serialized_pb=b'\n\x0chealth.proto\x1a\x1bgoogle/protobuf/empty.proto\"/\n\x1aShouldersPositionChangeMsg\x12\x11\n\tisCrooked\x18\x01 \x01(\x08\"*\n\x15NosePositionChangeMsg\x12\x11\n\tisCrooked\x18\x01 \x01(\x08\"\x19\n\x07\x42linked\x12\x0e\n\x06\x61mount\x18\x01 \x01(\r2\xd5\x01\n\x06Health\x12\x31\n\x0bUserBlinked\x12\x08.Blinked\x1a\x16.google.protobuf.Empty(\x01\x12P\n\x17ShouldersPositionChange\x12\x1b.ShouldersPositionChangeMsg\x1a\x16.google.protobuf.Empty(\x01\x12\x46\n\x12NosePositionChange\x12\x16.NosePositionChangeMsg\x1a\x16.google.protobuf.Empty(\x01\x42\x08Z\x06/protob\x06proto3'
   ,
   dependencies=[google_dot_protobuf_dot_empty__pb2.DESCRIPTOR,])
 
 
 
 
-_SHOULDERSANGLES = _descriptor.Descriptor(
-  name='ShouldersAngles',
-  full_name='ShouldersAngles',
+_SHOULDERSPOSITIONCHANGEMSG = _descriptor.Descriptor(
+  name='ShouldersPositionChangeMsg',
+  full_name='ShouldersPositionChangeMsg',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='leftShoulderAngle', full_name='ShouldersAngles.leftShoulderAngle', index=0,
-      number=1, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
-      message_type=None, enum_type=None, containing_type=None,
-      is_extension=False, extension_scope=None,
-      serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
-    _descriptor.FieldDescriptor(
-      name='rightShoulderAngle', full_name='ShouldersAngles.rightShoulderAngle', index=1,
-      number=2, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
+      name='isCrooked', full_name='ShouldersPositionChangeMsg.isCrooked', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -62,22 +55,22 @@ _SHOULDERSANGLES = _descriptor.Descriptor(
   oneofs=[
   ],
   serialized_start=45,
-  serialized_end=117,
+  serialized_end=92,
 )
 
 
-_NOSEANGLE = _descriptor.Descriptor(
-  name='NoseAngle',
-  full_name='NoseAngle',
+_NOSEPOSITIONCHANGEMSG = _descriptor.Descriptor(
+  name='NosePositionChangeMsg',
+  full_name='NosePositionChangeMsg',
   filename=None,
   file=DESCRIPTOR,
   containing_type=None,
   create_key=_descriptor._internal_create_key,
   fields=[
     _descriptor.FieldDescriptor(
-      name='noseAngle', full_name='NoseAngle.noseAngle', index=0,
-      number=1, type=1, cpp_type=5, label=1,
-      has_default_value=False, default_value=float(0),
+      name='isCrooked', full_name='NosePositionChangeMsg.isCrooked', index=0,
+      number=1, type=8, cpp_type=7, label=1,
+      has_default_value=False, default_value=False,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       serialized_options=None, file=DESCRIPTOR,  create_key=_descriptor._internal_create_key),
@@ -93,8 +86,8 @@ _NOSEANGLE = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=119,
-  serialized_end=149,
+  serialized_start=94,
+  serialized_end=136,
 )
 
 
@@ -125,28 +118,28 @@ _BLINKED = _descriptor.Descriptor(
   extension_ranges=[],
   oneofs=[
   ],
-  serialized_start=151,
-  serialized_end=176,
+  serialized_start=138,
+  serialized_end=163,
 )
 
-DESCRIPTOR.message_types_by_name['ShouldersAngles'] = _SHOULDERSANGLES
-DESCRIPTOR.message_types_by_name['NoseAngle'] = _NOSEANGLE
+DESCRIPTOR.message_types_by_name['ShouldersPositionChangeMsg'] = _SHOULDERSPOSITIONCHANGEMSG
+DESCRIPTOR.message_types_by_name['NosePositionChangeMsg'] = _NOSEPOSITIONCHANGEMSG
 DESCRIPTOR.message_types_by_name['Blinked'] = _BLINKED
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
-ShouldersAngles = _reflection.GeneratedProtocolMessageType('ShouldersAngles', (_message.Message,), {
-  'DESCRIPTOR' : _SHOULDERSANGLES,
+ShouldersPositionChangeMsg = _reflection.GeneratedProtocolMessageType('ShouldersPositionChangeMsg', (_message.Message,), {
+  'DESCRIPTOR' : _SHOULDERSPOSITIONCHANGEMSG,
   '__module__' : 'health_pb2'
-  # @@protoc_insertion_point(class_scope:ShouldersAngles)
+  # @@protoc_insertion_point(class_scope:ShouldersPositionChangeMsg)
   })
-_sym_db.RegisterMessage(ShouldersAngles)
+_sym_db.RegisterMessage(ShouldersPositionChangeMsg)
 
-NoseAngle = _reflection.GeneratedProtocolMessageType('NoseAngle', (_message.Message,), {
-  'DESCRIPTOR' : _NOSEANGLE,
+NosePositionChangeMsg = _reflection.GeneratedProtocolMessageType('NosePositionChangeMsg', (_message.Message,), {
+  'DESCRIPTOR' : _NOSEPOSITIONCHANGEMSG,
   '__module__' : 'health_pb2'
-  # @@protoc_insertion_point(class_scope:NoseAngle)
+  # @@protoc_insertion_point(class_scope:NosePositionChangeMsg)
   })
-_sym_db.RegisterMessage(NoseAngle)
+_sym_db.RegisterMessage(NosePositionChangeMsg)
 
 Blinked = _reflection.GeneratedProtocolMessageType('Blinked', (_message.Message,), {
   'DESCRIPTOR' : _BLINKED,
@@ -165,8 +158,8 @@ _HEALTH = _descriptor.ServiceDescriptor(
   index=0,
   serialized_options=None,
   create_key=_descriptor._internal_create_key,
-  serialized_start=179,
-  serialized_end=362,
+  serialized_start=166,
+  serialized_end=379,
   methods=[
   _descriptor.MethodDescriptor(
     name='UserBlinked',
@@ -179,21 +172,21 @@ _HEALTH = _descriptor.ServiceDescriptor(
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='ShoulderChangeAngle',
-    full_name='Health.ShoulderChangeAngle',
+    name='ShouldersPositionChange',
+    full_name='Health.ShouldersPositionChange',
     index=1,
     containing_service=None,
-    input_type=_SHOULDERSANGLES,
+    input_type=_SHOULDERSPOSITIONCHANGEMSG,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,
   ),
   _descriptor.MethodDescriptor(
-    name='NoseChangeAngle',
-    full_name='Health.NoseChangeAngle',
+    name='NosePositionChange',
+    full_name='Health.NosePositionChange',
     index=2,
     containing_service=None,
-    input_type=_NOSEANGLE,
+    input_type=_NOSEPOSITIONCHANGEMSG,
     output_type=google_dot_protobuf_dot_empty__pb2._EMPTY,
     serialized_options=None,
     create_key=_descriptor._internal_create_key,

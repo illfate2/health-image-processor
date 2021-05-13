@@ -4,15 +4,15 @@ option go_package = "/proto";
 
 service Health {
     rpc UserBlinked (stream Blinked) returns (google.protobuf.Empty);
-    rpc ShouldersPositionChange (stream ShouldersPositionChange) returns (google.protobuf.Empty);
-    rpc NosePositionChange (stream NosePositionChange) returns (google.protobuf.Empty);
+    rpc ShouldersPositionChange (stream ShouldersPositionChangeMsg) returns (google.protobuf.Empty);
+    rpc NosePositionChange (stream NosePositionChangeMsg) returns (google.protobuf.Empty);
 }
 
-message ShouldersPositionChange {
+message ShouldersPositionChangeMsg {
     bool isCrooked = 1;
 }
 
-message NosePositionChange {
+message NosePositionChangeMsg {
     bool isCrooked = 1;
 }
 
