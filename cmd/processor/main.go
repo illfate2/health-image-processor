@@ -6,8 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/illfate2/health-image-processor/internal/blinker"
-	"github.com/illfate2/health-image-processor/internal/image"
+	"github.com/illfate2/health-image-processor/internal/body"
 	"github.com/illfate2/health-image-processor/internal/server/grpc"
 	"github.com/illfate2/health-image-processor/internal/server/ws"
 	"github.com/illfate2/health-image-processor/proto"
@@ -19,9 +18,8 @@ const grpcServerPortEnv = "GRPC_SERVER_PORT"
 const httpServerPortEnv = "HTTP_SERVER_PORT"
 
 func main() {
-	service := blinker.NewService(4)
-	processor := image.NewProcessor()
-	wsServer := ws.NewServer(service, processor)
+	service := body.NewService(4)
+	wsServer := ws.NewServer(service)
 	go func() {
 		log.Fatal(http.ListenAndServe(":"+os.Getenv(httpServerPortEnv), wsServer))
 	}()

@@ -3,16 +3,16 @@ package grpc
 import (
 	"io"
 
-	"github.com/illfate2/health-image-processor/internal/blinker"
+	"github.com/illfate2/health-image-processor/internal/body"
 	"github.com/illfate2/health-image-processor/proto"
 )
 
 type Server struct {
 	proto.UnimplementedHealthServer
-	service *blinker.Service
+	service *body.Processor
 }
 
-func NewServer(service *blinker.Service) *Server {
+func NewServer(service *body.Processor) *Server {
 	return &Server{service: service}
 }
 
@@ -35,7 +35,7 @@ func (s *Server) UserBlinked(req proto.Health_UserBlinkedServer) error {
 	}
 }
 
-func (s *Server) ShoulderChangeAngle(req proto.Health_ShoulderChangeAngleServer) error {
+func (s *Server) ShouldersPositionChange(req proto.Health_ShouldersPositionChangeServer) error {
 	for {
 		_, err := req.Recv()
 		if err == io.EOF {
@@ -54,7 +54,7 @@ func (s *Server) ShoulderChangeAngle(req proto.Health_ShoulderChangeAngleServer)
 	}
 }
 
-func (s *Server) NoseChangeAngle(req proto.Health_NoseChangeAngleServer) error {
+func (s *Server) NosePositionChange(req proto.Health_NosePositionChangeServer) error {
 	for {
 		_, err := req.Recv()
 		if err == io.EOF {

@@ -9,31 +9,19 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
-	"github.com/illfate2/health-image-processor/internal/blinker"
-	"github.com/illfate2/health-image-processor/internal/image"
+	"github.com/illfate2/health-image-processor/internal/body"
 )
 
 type Server struct {
 	http.Handler
-	service   *blinker.Service
-	processor *image.Processor
-	upgrader  *websocket.Upgrader
+	service  *body.Processor
+	upgrader *websocket.Upgrader
 }
 
-type notifyMessage struct {
-	Type    string `json:"type"`
-	Message string `json:"message"`
-}
-
-func newNotifyMessage(t string, message string) notifyMessage {
-	return notifyMessage{Type: t, Message: message}
-}
-
-func NewServer(service *blinker.Service, processor *image.Processor) *Server {
+func NewServer(service *body.Processor) *Server {
 	s := &Server{
-		service:   service,
-		upgrader:  &websocket.Upgrader{},
-		processor: processor,
+		service:  service,
+		upgrader: &websocket.Upgrader{},
 	}
 	engine := gin.New()
 	engine.Use(cors.New(cors.Config{
@@ -59,18 +47,11 @@ func (s *Server) handleEvents(c *gin.Context) {
 
 	ctx, cancelF := context.WithCancel(c.Request.Context())
 	defer cancelF()
-	notifyCh := s.service.StartNotifyingToBlink(ctx)
-	imageCh := s.processor.GetNotificationCh()
+	notifyCh := s.service.StartNotifying(ctx)
 	for {
 		select {
-		case <-notifyCh:
-			err = conn.WriteJSON(newNotifyMessage("blink", "Pls, blink"))
-			if err != nil {
-				log.Println("write:", err)
-				return
-			}
-		case <-imageCh:
-			err = conn.WriteJSON(newNotifyMessage("crooked", "Pls, sit up straight"))
+		case msg := <-notifyCh:
+			err = conn.WriteJSON(msg)
 			if err != nil {
 				log.Println("write:", err)
 				return
