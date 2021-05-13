@@ -20,6 +20,16 @@ class HealthStub(object):
                 request_serializer=health__pb2.Blinked.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
+        self.ShoulderChangeAngle = channel.stream_unary(
+                '/Health/ShoulderChangeAngle',
+                request_serializer=health__pb2.ShouldersAngles.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
+        self.NoseChangeAngle = channel.stream_unary(
+                '/Health/NoseChangeAngle',
+                request_serializer=health__pb2.NoseAngle.SerializeToString,
+                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                )
 
 
 class HealthServicer(object):
@@ -31,12 +41,34 @@ class HealthServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def ShoulderChangeAngle(self, request_iterator, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def NoseChangeAngle(self, request_iterator, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_HealthServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'UserBlinked': grpc.stream_unary_rpc_method_handler(
                     servicer.UserBlinked,
                     request_deserializer=health__pb2.Blinked.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
+            'ShoulderChangeAngle': grpc.stream_unary_rpc_method_handler(
+                    servicer.ShoulderChangeAngle,
+                    request_deserializer=health__pb2.ShouldersAngles.FromString,
+                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            ),
+            'NoseChangeAngle': grpc.stream_unary_rpc_method_handler(
+                    servicer.NoseChangeAngle,
+                    request_deserializer=health__pb2.NoseAngle.FromString,
                     response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
     }
@@ -62,6 +94,40 @@ class Health(object):
             metadata=None):
         return grpc.experimental.stream_unary(request_iterator, target, '/Health/UserBlinked',
             health__pb2.Blinked.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def ShoulderChangeAngle(request_iterator,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.stream_unary(request_iterator, target, '/Health/ShoulderChangeAngle',
+            health__pb2.ShouldersAngles.SerializeToString,
+            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def NoseChangeAngle(request_iterator,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.stream_unary(request_iterator, target, '/Health/NoseChangeAngle',
+            health__pb2.NoseAngle.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
