@@ -27,8 +27,8 @@ func NewService(blinkedTime int) *Processor {
 	return &Processor{
 		blinkedTime:   blinkedTime,
 		blinkTimeout:  5,
-		noseCrookedCh: make(chan struct{}),
-		backCrookedCh: make(chan struct{}),
+		noseCrookedCh: make(chan struct{}, 100),
+		backCrookedCh: make(chan struct{}, 100),
 	}
 }
 
