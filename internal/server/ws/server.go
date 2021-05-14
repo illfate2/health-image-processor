@@ -23,6 +23,10 @@ func NewServer(service *body.Processor) *Server {
 		service:  service,
 		upgrader: &websocket.Upgrader{},
 	}
+	s.upgrader.CheckOrigin = func(r *http.Request) bool {
+		return true
+	}
+
 	engine := gin.New()
 	engine.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
