@@ -57,6 +57,8 @@ func timeSinceMoreThenSec(from time.Time, than int) bool {
 	return time.Since(from).Seconds() > float64(than)
 }
 
+const faceIsNotRecognizedTimeout = 10
+
 func (s *Processor) StartNotifying(ctx context.Context) <-chan NotifyMessage {
 	const ticketDur = time.Millisecond * 50
 	blinkTicker := time.NewTicker(ticketDur)
@@ -64,21 +66,21 @@ func (s *Processor) StartNotifying(ctx context.Context) <-chan NotifyMessage {
 	ch := make(chan NotifyMessage)
 	go func() {
 		for {
-			if !s.isFaceRecognized.Load() && timeSinceMoreThenSec(s.lastFaceNotRecognizedNotified, 5) {
+			if !s.isFaceRecognized.Load() && timeSinceMoreThenSec(s.lastFaceNotRecognizedNotified, faceIsNotRecognizedTimeout) {
 				ch <- NotifyMessage{
 					Type:    "error",
 					Message: "Face is not recognized",
 				}
 				s.lastFaceNotRecognizedNotified = time.Now()
 			}
-			if !s.isBackRecognized.Load() && timeSinceMoreThenSec(s.lastCrookedBackNotified, 5) {
+			if !s.isBackRecognized.Load() && timeSinceMoreThenSec(s.lastCrookedBackNotified, faceIsNotRecognizedTimeout) {
 				ch <- NotifyMessage{
 					Type:    "error",
 					Message: "Back is not recognized",
 				}
 				s.lastCrookedBackNotified = time.Now()
 			}
-			if !s.isNoseRecognized.Load() && timeSinceMoreThenSec(s.lastCrookedNoseNotified, 5) {
+			if !s.isNoseRecognized.Load() && timeSinceMoreThenSec(s.lastCrookedNoseNotified, faceIsNotRecognizedTimeout) {
 				ch <- NotifyMessage{
 					Type:    "error",
 					Message: "Face is not recognized",
