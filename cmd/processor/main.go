@@ -18,7 +18,7 @@ const grpcServerPortEnv = "GRPC_SERVER_PORT"
 const httpServerPortEnv = "HTTP_SERVER_PORT"
 
 func main() {
-	service := body.NewService(4)
+	service := body.NewService()
 	wsServer := ws.NewServer(service)
 	go func() {
 		log.Fatal(http.ListenAndServe(":"+os.Getenv(httpServerPortEnv), wsServer))

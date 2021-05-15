@@ -1,12 +1,20 @@
 package body
 
 import (
+	"go.uber.org/atomic"
+
 	"context"
 	"log"
 	"time"
 )
 
 type Processor struct {
+	lastFaceNotRecognizedNotified time.Time
+	isFaceRecognized              *atomic.Bool
+	isNoseRecognized              *atomic.Bool
+	isBackRecognized              *atomic.Bool
+	faceIsNotRecognizedCh         chan struct{}
+
 	userLastBlinked   time.Time
 	lastBlinkNotified time.Time
 	blinkedTime       int
@@ -23,12 +31,16 @@ type Processor struct {
 	backCrookedTimeout      int
 }
 
-func NewService(blinkedTime int) *Processor {
+func NewService() *Processor {
 	return &Processor{
-		blinkedTime:   blinkedTime,
-		blinkTimeout:  5,
-		noseCrookedCh: make(chan struct{}, 100000),
-		backCrookedCh: make(chan struct{}, 100000),
+		isFaceRecognized:      atomic.NewBool(true),
+		isBackRecognized:      atomic.NewBool(true),
+		isNoseRecognized:      atomic.NewBool(true),
+		faceIsNotRecognizedCh: make(chan struct{}),
+		blinkedTime:           3,
+		blinkTimeout:          5,
+		noseCrookedCh:         make(chan struct{}, 100000),
+		backCrookedCh:         make(chan struct{}, 100000),
 	}
 }
 
@@ -41,6 +53,10 @@ func newNotifyMessage(t string, message string) NotifyMessage {
 	return NotifyMessage{Type: t, Message: message}
 }
 
+func timeSinceMoreThenSec(from time.Time, than int) bool {
+	return time.Since(from).Seconds() > float64(than)
+}
+
 func (s *Processor) StartNotifying(ctx context.Context) <-chan NotifyMessage {
 	const ticketDur = time.Millisecond * 50
 	blinkTicker := time.NewTicker(ticketDur)
@@ -48,9 +64,30 @@ func (s *Processor) StartNotifying(ctx context.Context) <-chan NotifyMessage {
 	ch := make(chan NotifyMessage)
 	go func() {
 		for {
+			if !s.isFaceRecognized.Load() && timeSinceMoreThenSec(s.lastFaceNotRecognizedNotified, 5) {
+				ch <- NotifyMessage{
+					Type:    "error",
+					Message: "Face is not recognized",
+				}
+				s.lastFaceNotRecognizedNotified = time.Now()
+			}
+			if !s.isBackRecognized.Load() && timeSinceMoreThenSec(s.lastCrookedBackNotified, 5) {
+				ch <- NotifyMessage{
+					Type:    "error",
+					Message: "Back is not recognized",
+				}
+				s.lastCrookedBackNotified = time.Now()
+			}
+			if !s.isNoseRecognized.Load() && timeSinceMoreThenSec(s.lastCrookedNoseNotified, 5) {
+				ch <- NotifyMessage{
+					Type:    "error",
+					Message: "Face is not recognized",
+				}
+				s.lastCrookedNoseNotified = time.Now()
+			}
 			select {
 			case <-blinkTicker.C:
-				if time.Since(s.userLastBlinked).Seconds() > float64(s.blinkedTime) && time.Since(s.lastBlinkNotified).Seconds() > float64(s.blinkTimeout) {
+				if timeSinceMoreThenSec(s.userLastBlinked, s.blinkedTime) && timeSinceMoreThenSec(s.lastBlinkNotified, s.blinkTimeout) && s.isFaceRecognized.Load() {
 					log.Print("Sending notification to blink")
 					ch <- NotifyMessage{
 						Type:    "blink",
@@ -60,14 +97,21 @@ func (s *Processor) StartNotifying(ctx context.Context) <-chan NotifyMessage {
 				}
 
 			case <-s.backCrookedCh:
-				ch <- NotifyMessage{
-					Type:    "crookedBack",
-					Message: "Pls, sit straight",
+				if timeSinceMoreThenSec(s.lastCrookedBackNotified, 5) && s.isBackRecognized.Load() {
+					ch <- NotifyMessage{
+						Type:    "crookedBack",
+						Message: "Pls, sit straight",
+					}
+					s.lastCrookedBackNotified = time.Now()
 				}
+
 			case <-s.noseCrookedCh:
-				ch <- NotifyMessage{
-					Type:    "crookedHead",
-					Message: "Pls, set your head straight",
+				if timeSinceMoreThenSec(s.lastCrookedNoseNotified, 5) && s.isNoseRecognized.Load() {
+					ch <- NotifyMessage{
+						Type:    "crookedHead",
+						Message: "Pls, set your head straight",
+					}
+					s.lastCrookedNoseNotified = time.Now()
 				}
 			case <-ctx.Done():
 				blinkTicker.Stop()
@@ -81,18 +125,22 @@ func (s *Processor) StartNotifying(ctx context.Context) <-chan NotifyMessage {
 
 func (s *Processor) Blinked(isFaceRecognized bool) {
 	if !isFaceRecognized {
+		s.isFaceRecognized.Store(false)
 		log.Print("face is not recognized for blinking")
 		return
 	}
+	s.isFaceRecognized.Store(true)
 	log.Print("Blinking...")
 	s.userLastBlinked = time.Now()
 }
 
 func (s *Processor) NoseCrooked(isCrooked, isFaceRecognized bool) {
 	if !isFaceRecognized {
+		s.isNoseRecognized.Store(false)
 		log.Print("face is not recognized for nose")
 		return
 	}
+	s.isNoseRecognized.Store(true)
 	log.Print("Nose crooked...", isCrooked)
 	if isCrooked {
 		s.noseCrookedCh <- struct{}{}
@@ -101,9 +149,11 @@ func (s *Processor) NoseCrooked(isCrooked, isFaceRecognized bool) {
 
 func (s *Processor) BackCrooked(isCrooked, isFaceRecognized bool) {
 	if !isFaceRecognized {
+		s.isBackRecognized.Store(false)
 		log.Print("face is not recognized for back")
 		return
 	}
+	s.isBackRecognized.Store(true)
 	log.Print("Back crooked...", isCrooked)
 	if isCrooked {
 		s.backCrookedCh <- struct{}{}
