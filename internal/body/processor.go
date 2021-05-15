@@ -37,7 +37,7 @@ func NewService() *Processor {
 		isBackRecognized:      atomic.NewBool(true),
 		isNoseRecognized:      atomic.NewBool(true),
 		faceIsNotRecognizedCh: make(chan struct{}),
-		blinkedTime:           3,
+		blinkedTime:           5,
 		blinkTimeout:          5,
 		noseCrookedCh:         make(chan struct{}, 100000),
 		backCrookedCh:         make(chan struct{}, 100000),
@@ -66,27 +66,6 @@ func (s *Processor) StartNotifying(ctx context.Context) <-chan NotifyMessage {
 	ch := make(chan NotifyMessage)
 	go func() {
 		for {
-			if !s.isFaceRecognized.Load() && timeSinceMoreThenSec(s.lastFaceNotRecognizedNotified, faceIsNotRecognizedTimeout) {
-				ch <- NotifyMessage{
-					Type:    "error",
-					Message: "Face is not recognized",
-				}
-				s.lastFaceNotRecognizedNotified = time.Now()
-			}
-			if !s.isBackRecognized.Load() && timeSinceMoreThenSec(s.lastCrookedBackNotified, faceIsNotRecognizedTimeout) {
-				ch <- NotifyMessage{
-					Type:    "error",
-					Message: "Back is not recognized",
-				}
-				s.lastCrookedBackNotified = time.Now()
-			}
-			if !s.isNoseRecognized.Load() && timeSinceMoreThenSec(s.lastCrookedNoseNotified, faceIsNotRecognizedTimeout) {
-				ch <- NotifyMessage{
-					Type:    "error",
-					Message: "Face is not recognized",
-				}
-				s.lastCrookedNoseNotified = time.Now()
-			}
 			select {
 			case <-blinkTicker.C:
 				if timeSinceMoreThenSec(s.userLastBlinked, s.blinkedTime) && timeSinceMoreThenSec(s.lastBlinkNotified, s.blinkTimeout) && s.isFaceRecognized.Load() {
